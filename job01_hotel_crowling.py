@@ -27,9 +27,9 @@ time.sleep(0.5)
 button_region = driver.find_element(By.XPATH, button_region_xpath)
 driver.execute_script('arguments[0].click();', button_region)
 time.sleep(0.5)
-button_gyeongsang_xpath = 'html/body/div[3]/div/div/div/div/main/section/div/ul[1]/li[7]'
-button_gyeongsang = driver.find_element(By.XPATH, button_gyeongsang_xpath)
-driver.execute_script('arguments[0].click();', button_gyeongsang)
+button_busan_xpath = 'html/body/div[3]/div/div/div/div/main/section/div/ul[1]/li[2]'
+button_busan = driver.find_element(By.XPATH, button_busan_xpath)
+driver.execute_script('arguments[0].click();', button_busan)
 time.sleep(0.5)
 all_url = driver.find_element('xpath', '/html/body/div[3]/div/div/div/div/main/section/div/ul[2]/li/a').get_attribute('href')
 driver.get(all_url)
@@ -66,7 +66,7 @@ for i in range(150):
         hap_hotel_name.append(hotel_name1[i])
 
 df = pd.DataFrame({'names': hap_hotel_name})
-df.to_csv('./crawling_data/hap_hotel_names_gyeongsang.csv', index=False)
+df.to_csv('./crawling_data/hap_hotel_names_busan.csv', index=False)
 print(len(hap_hotel_name))
 
 review_url = []
@@ -112,7 +112,7 @@ for idx, url in enumerate(review_url):
     if (idx+1) % 30 == 0:
         print(idx)
         df = pd.DataFrame({'names': names, 'reviews': reviews})
-        df.to_csv('./crawling_data/reviews_gyeongsang{}.csv'.format(idx), index=False)
+        df.to_csv('./crawling_data/reviews_busan{}.csv'.format(idx), index=False)
         names = []
         reviews = []
         # for i in range(5):
