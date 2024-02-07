@@ -47,6 +47,7 @@ class Exam(QWidget, form_window):
         self.btn_recommendation.clicked.connect(self.btn_slot)
 
     def select_regions(self):
+        self.le_search.clear()
         self.hotel_flag = 0
         self.lbl_keyword.setText('')
         self.hotel_name = []
@@ -70,6 +71,7 @@ class Exam(QWidget, form_window):
 
 
     def cmb_hotel_slot(self):
+        self.le_search.clear()
         if self.hotel_flag == 1:
             name = self.cmb_hotel.currentText()
             recommendation = self.recommendation_by_name(name)
