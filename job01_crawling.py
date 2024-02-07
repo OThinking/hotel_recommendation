@@ -27,14 +27,13 @@ time.sleep(0.5)
 button_region = driver.find_element(By.XPATH, button_region_xpath)
 driver.execute_script('arguments[0].click();', button_region)
 time.sleep(0.5)
+button_jeonra_xpath = 'html/body/div[3]/div/div/div/div/main/section/div/ul[1]/li[8]'
+button_jeonra = driver.find_element(By.XPATH, button_jeonra_xpath)
+driver.execute_script('arguments[0].click();', button_jeonra)
+time.sleep(0.5)
 all_url = driver.find_element('xpath', '/html/body/div[3]/div/div/div/div/main/section/div/ul[2]/li/a').get_attribute('href')
 driver.get(all_url)
 time.sleep(0.5)
-# button_busan_xpath = 'html/body/div[3]/div/div/div/div/main/section/div/ul[1]/li[2]'
-# button_busan = driver.find_element(By.XPATH, button_busan_xpath)
-# driver.execute_script('arguments[0].click();', button_busan)
-# time.sleep(0.5)
-
 button_popular_xpath = '//*[@id="__next"]/div[2]/section[1]/button'
 button_popular = driver.find_element(By.XPATH, button_popular_xpath)
 driver.execute_script('arguments[0].click();', button_popular)
@@ -50,151 +49,78 @@ list_review_url = []
 hotel_name1 = []
 hotel_name2 = []
 
-for i in range(1, 11):
+for i in range(1, 151):
     base = driver.find_element(By.XPATH, f'//*[@id="__next"]/div[2]/section[2]/div/div/div[{i}]/a').get_attribute("href")
     list_review_url.append(f"{base}/review")
     title1 = driver.find_element(By.XPATH, f'//*[@id="__next"]/div[2]/section[2]/div/div/div[{i}]/a/div[1]/div[2]/div[2]').text
     hotel_name1.append(title1)
     title2 = driver.find_element(By.XPATH, f'//*[@id="__next"]/div[2]/section[2]/div/div/div[{i}]/a/div/div[2]/div[1]').text
+    # //*[@id="__next"]/div[2]/section[2]/div/div/div[75]/a/div[1]/div[2]/div[1]
+    # //*[@id="__next"]/div[2]/section[2]/div/div/div[88]/a/div/div[2]/div[1]
     hotel_name2.append(title2)
-print(len(list_review_url))
-print(len(hotel_name1))
-print(hotel_name1)
-print(hotel_name2)
-print(list_review_url)
 
 hap_hotel_name = []
-for i in range(10):
+for i in range(150):
     if('1'<= hotel_name1[i][0] <='9'):
         hap_hotel_name.append(hotel_name2[i])
     else:
         hap_hotel_name.append(hotel_name1[i])
-print(hap_hotel_name)
+print(len(hap_hotel_name))
+
+df = pd.DataFrame({'names': hap_hotel_name})
+df.to_csv('./crawling_data/hap_hotel_names_jeonra.csv', index=False)
+print(len(hap_hotel_name))
 
 review_url = []
 for i in list_review_url:
     add = i.replace('www.yanolja.com/hotel','place-site.yanolja.com/places')
     review_url.append(add)
-print(review_url)
+print(len(review_url))
 
-for url in review_url:
+reviews = []
+names = []
+for idx, url in enumerate(review_url):
     driver.get(url)
-    time.sleep(1)
-    reviews = []
+    time.sleep(0.5)
     review = ''
     driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
     time.sleep(0.5)
     driver.execute_script("window.scrollTo(1, document.documentElement.scrollHeight);")
     time.sleep(0.5)
-    for i in range(20):
+    for i in range(6):
         driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
         time.sleep(0.5)
+    for i in range(1, 21):
+        try:
+            review_one_xpath = '//*[@id="__next"]/div/div/main/div/div[4]/div/div[{}]/div/div/div[2]/div[1]'.format(i)
+            review = review + ' ' + driver.find_element(By.XPATH, review_one_xpath).text
+            time.sleep(0.5)
+        except:
+            print('초기 인덱스 에러', i)
+    for j in range(2, 6):
+        for k in range(1, 21):
+            try:
+                review_other_xpath = f'//*[@id="__next"]/div/div/main/div/div[4]/div[{j}]/div[{k}]/div/div/div[2]'
+                review = review + ' ' + driver.find_element(By.XPATH, review_other_xpath).text
+            except NoSuchElementException:
+                try:
+                    review_another_xpath = f'//*[@id="__next"]/div/div/main/div/div[4]/div[{j}]/div[{k}]/div/div/div[2]/div[1]'
+                    review = review + ' ' + driver.find_element(By.XPATH, review_another_xpath).text
+                except:
+                    print('review error', idx, j, k)
+    reviews.append(review)
+    names.append(hap_hotel_name[idx])
 
-    # driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
-    # time.sleep(0.5)
-    # for j in range(1, 11):
-    #     review_xpath = '//*[@id="__next"]/div/div/main/div/div[4]/div/div[{}]/div/div/div[2]/div'.format(j)
-    #     review = review + ' ' + driver.find_element(By.XPATH, review_xpath).text
-    # reviews.append(review)
-    # print(len(reviews))
-    # for idx, url in enumerate(review_url[0:10]):
-    #     driver.get(url)
-    #     time.sleep(0.5)
-    #     review = ''
-    #     driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
-    #     time.sleep(0.5)
-    #     driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
-    #     time.sleep(0.5)
-    #     for j in range(1, 11):
-    #         review_xpath = '//*[@id="__next"]/div/div/main/div/div[4]/div/div[{}]/div/div/div[2]/div'.format(j)
-    #         review = review + ' ' + driver.find_element(By.XPATH, review_xpath).text
-    #     reviews.append(review)
-    # print(len(reviews))
+    if (idx+1) % 30 == 0:
+        print(idx)
+        df = pd.DataFrame({'names': names, 'reviews': reviews})
+        df.to_csv('./crawling_data/reviews_jeonra{}.csv'.format(idx), index=False)
+        names = []
+        reviews = []
+        # for i in range(5):
+        #     df = pd.DataFrame({'names': hap_hotel_name[i*30:i*30+30], 'reviews': reviews})
+        #     df.to_csv('./crawling_data/reviews_seoul{}.csv'.format(idx), index=False)
 
-
-# review = ''
-#     driver.execute_script('window.scrollTo(0, document.documentElement.scrollHeight);')
-#     time.sleep(1)
-#     driver.execute_script('window.scrollTo(0, document.documentElement.scrollHeight);')
-#     time.sleep(1)
-#     for i in range(1, 31):
-#         try:
-#             review_title_xpath = '//*[@id="contents"]/div[2]/div[2]/div[{}]/div/div[3]/a[1]/div'.format(i)
-#             review_more_xpath = '//*[@id="contents"]/div[2]/div[2]/div[{}]/div/div[3]/div/button'.format(i)
-#             try:
-#                 print(i)
-#                 review_more = driver.find_element(By.XPATH, review_more_xpath)
-#                 driver.execute_script('arguments[0].click();', review_more)
-#                 time.sleep(1)
-#                 review_xpath = '//*[@id="contents"]/div[2]/div[1]/div/section[2]/div/div/div/p'
-#                 review += ' ' + driver.find_element(By.XPATH, review_xpath).text
-#                 driver.back()
-#                 time.sleep(1)
-#             except:
-#                 review += ' ' + driver.find_element(By.XPATH, review_title_xpath).text
-#         except:
-#             print('no more')
-#     # print(review)
-#     reviews.append(review + '@@')
-
-# for i in range(1, 5):
-#     one_hotel_driver = webdriver.Chrome(service=service, options=options)
-#     try:
-#         one_hotel_url = driver.find_element('xpath', '//*[@id="__next"]/div[2]/section[2]/div/div/div[{}]/a'.format(i)).get_attribute('href')
-#         one_hotel_driver.get(one_hotel_url)
-#         time.sleep(0.5)
-#         button_movie_tv_xpath = '//*[@id="__next"]/div/div/main/article/div[1]/div/div[1]/div[4]'
-#         button_movie_tv = driver.find_element(By.XPATH, button_movie_tv_xpath)
-#         driver.execute_script('arguments[0].click();', button_movie_tv)  # 자바스크립트로 되어있어서 변형해준다
-#         time.sleep(1)
-        # driver.find_element('xpath', '//*[@id="__next"]/div/div/main/article/div[1]/div/div[1]/div[5]/div[3]/div/div[3]/div').click()
-        # time.sleep(0.5)
-
-        # title = one_movie_driver.find_element('xpath', '//*[@id="content"]/div[2]/div/div[1]/div[1]/strong').text
-        #
-        # text = one_movie_driver.find_element('xpath', '//*[@id="content"]/div[2]/ul/li[1]/div[3]/p').text
-        # text = re.compile('[^가-힇]').sub(' ', text)
-        #
-        # movie_titles.append(title)
-        # movie_synopsis.append(text)
-
-    #     one_hotel_driver.close()
-    # except:
-    #     print('find element', i)
-    #     one_hotel_driver.close()
-
-
-        # //*[@id="__next"]/div/div/main/article/div[1]/div/div[1]/div[4]
-        # //*[@id="__next"]/div/div/main/article/div[1]/div/div[1]/div[4]
-
-        # ↓ 더보기 클릭 ↓
-#             driver.find_element('xpath', '//*[@id="content"]/div[2]/button').click()
-#             time.sleep(0.5)
-#             for i in range(j * 30 + 1, j * 30 + 31):
-#                 one_movie_driver = webdriver.Chrome(service=service, options=options)
-#
-# //*[@id="__next"]/div[2]/section[2]/div/div/div[2]/a
-# one_hotel_url = []
-# for i in list_review_url:
-#     if ('1'<= i <= '9'):
-#         one_hotel_url.append(i)
-# print(one_hotel_url)
-
-# re_title = re.compile('[^가-힣|a-z|A-Z]')
-#
-# reviews = []
-# for url in list_review_url:
-#     driver.get(url)
-#     time.sleep(1)
-# seoul_url = driver.find_element('xpath', '/html/body/div[3]/div/div/div/div/main/section/div/ul[2]/li/a').get_attribute('href')
-# driver.get(seoul_url)
-# time.sleep(0.5)
-# //*[@id="__next"]/div[2]/section[2]/div/div/div[1]/a
-# //*[@id="__next"]/div[2]/section[2]/div/div/div[2]/a
-
-
-
-# https://place-site.yanolja.com/places/3013410/review
-
-# list_review_url = pd.DataFrame(list_review_url)
-# list_review_url.replace({'www' : 'place-site', 'hotel' : 'places'}, inplace=True)
+print(len(reviews))
+# df = pd.DataFrame({'names': hap_hotel_name, 'reviews': reviews})
+# df.to_csv('./crawling_data/reviews_gangwon.csv', index=False)
