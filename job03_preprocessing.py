@@ -18,7 +18,7 @@ for review in df.reviews:
    print(tokened_review)
    df_token = pd.DataFrame(tokened_review, columns=['word', 'class'])
    df_token = df_token[(df_token['class']=='Noun') | (df_token['class']=='Verb') | (df_token['class']=='Adjective')]
-   # 꾸며주거나 불필요한 단어들을 제거하기 위해 명사, 형용사, 부사만 남기고 나머지 단어들을 전부 제거해 줌
+   # 꾸며주거나 불필요한 단어들을 제거하기 위해 명사, 동사, 형용사만 남기고 나머지 단어들을 전부 제거해 줌
    words = []
    for word in df_token.word:
       if 1 < len(word): #한 글자 길이인 단어들 제거
